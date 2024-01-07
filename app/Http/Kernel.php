@@ -65,5 +65,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'suapToken' =>\App\Http\Middleware\SuapToken::class,
+        'GuestMiddleware'=> \App\Http\Middleware\GuestMiddleware::class,
+        'UserAuthenticate'=>\App\Http\Middleware\UserAuthenticate::class,
     ];
 }

@@ -17,3 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Relatórios de cobertura de testes
+/tests/coverage/

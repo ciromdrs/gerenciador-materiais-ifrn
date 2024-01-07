@@ -1,86 +1,108 @@
 @extends('layouts.master')
-<!-- Font Icon -->
-    <link rel="stylesheet" href="">
 
-    <!-- Main css -->
-    <link rel="stylesheet" href="{{asset('cadastro_itens/css/style.css')}}">
+<!-- Main css -->
+<link rel="stylesheet" href="{{ asset('cadastro_itens/css/style.css') }}">
 
-    <!-- Favicons -->
-  <link href="{{asset('img/favicon.png')}}" rel="icon">
-  <link href="{{asset('img/apple-touch-icon.png')}}" rel="apple-touch-icon">
-
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="{{asset('main/vendor/aos/aos.css')}}" rel="stylesheet">
-  <link href="{{asset('main/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
-  <link href="{{asset('main/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
-  <link href="{{asset('main/vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
-  <link href="{{asset('main/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
-  <link href="{{asset('main/vendor/remixicon/remixicon.css')}}" rel="stylesheet">
-  <link href="{{asset('main/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link href="{{asset('main/css/style.css')}}" rel="stylesheet">  
-
- @section('master-main')
-
- <div class="container">
-    <div class="signup-content">
-        <div class="signup-form">
-            <h2 class="form-title">Editar item</h2>
-            <form method="GET" class="register-form " id="register-form" action="/inproduction">
+@section('master-main')
+    <div class="signup-content ">
+        <div class="signup-form mt-4">
+            <h1 class="form-title">Edição do item</h1>
+            <form method="post" class="register-form " id="register-form" action="{{ route('itens.update', $item->id) }}"
+                enctype="multipart/form-data">
                 @csrf
+
                 <div class="form-group">
-                    <input type="text" required name="name" id="name" placeholder="Nome Do Item" value=""/>
+                    <input type="text" required name="estado_conservacao" placeholder="Estado do item"
+                        value="{{ $item->estado_conservacao }}" />
+                </div>
+
+
+                <div class="form-group">
+                    <select class="custom-select " required id="CustomSelect" name="local_id" value="{{ @old('local') }}">
+                        <option selected value="{{ $item->local->id }}">{{ $item->local->nome }}</option>
+                        @foreach ($locais as $local)
+                            <option value="{{ $local->id }}">{{ $local->nome }}</option>
+                        @endforeach
+                    </select>
+                    <div id="fileHelpId" class="form-text">Escolher Local</div>
                 </div>
 
                 <div class="form-group">
-                    <select class="custom-select " required id="CustomSelect">
-                        <option selected>Categoria</option>
-                        <option value="1" >Futebol</option>
-                        <option value="2">Voleibol</option>
-                        <option value="3">Basquete</option>
+                    <select class="custom-select " required id="CustomSelect" name="material_id">
+                        <option selected value="{{ $item->material->id }}">{{ $item->material->nome }}</option>
+                        @foreach ($materiais as $material)
+                            <option value="{{ $material->id }}">{{ $material->nome }}</option>
+                        @endforeach
                     </select>
-                </div>
-                
-                <div class="form-group">
-
-                <select class="custom-select "  required id="CustomSelect">   
-                    <option selected>Local de armazenamento</option>
-                    <option value="1" >Depósito 1</option>
-                    <option value="2" >Depósito 2</option>
-                    <option value="3" >Depósito 3</option>
-                    </select>
-                </div>                            
-
-                <div class="form-group">
-                    <input type="date" readonly name="" id="name"/>
-                    <div class="form-text">Data de Entrada</div>
+                    <div id="fileHelpId" class="form-text">Escolher Material</div>
                 </div>
 
                 <div class="mb-3">
-                    <input type="file" class="form-control" name="" id="" placeholder="" aria-describedby="fileHelpId">
-                    <div id="fileHelpId" class="form-text">Escolher Foto</div>
+                    <input type="file" class="form-control" value="{{ @old('foto') }}" name="foto"
+                        aria-describedby="fileHelpId">
+                    <small class="form-text">Foto do Item</small>
+                    @error('foto')
+                        <span class="badge bg-warning">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="form-group form-button">
                     <button class="form-submit border border-none">Salvar</button>
                 </div>
             </form>
+
+            <button type="button" class="form-submit border border-none" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
+                Novo Local
+            </button>
+
         </div>
 
-        <div class="signup-image">
-            {{-- <figure><img src="{{asset('cadastro_itens/images/signup-image.jpg')}}"alt="sing up image"></figure> --}}
-        </div>
-        
+        @php
+            try {
+                $path = Storage::url($item->arquivo->path);
+            } catch (\Throwable $th) {
+                $path = null;
+            }
+        @endphp
+        @if ($path != null)
+        <!-- Tratar o else -->
+            <div class="signup-image" style="display:flex; align-itens:center; flex-direction:column;">
+                <div class="text-center">
+                    <h2>Foto do item:</h2>
+                </div>
+                <img src="{{ $path }}"alt="Foto do item" style="height:auto width:auto;">
+                <div class="mt-3">
+                    <a href="{{ route('arquivos.apagar', $item->arquivo->id) }}" class="btn btn-success">Apagar</a>
+                </div>
+            </div>
+        @endif
     </div>
-</div>
 
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-@endsection
-<!-- JS -->
-<script src="{{asset('cadastro_itens/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('cadastro_itens/js/main.js')}}"></script>
+                <div class="m-5">
+                    <h2 class="form-title">Nova Categoria</h2>
+
+                    <form method="POST" class="register-form " action="/locais">
+                        @csrf
+                        <div class="form-group">
+                            <input type="text" required name="nome" id="name" placeholder="Nome Do Local"
+                                value="{{ @old('nome') }}" />
+                        </div>
+                        @error('nome')
+                            <span class="badge bg-warning">{{ $message }}</span>
+                        @enderror
+
+                        <div class="form-group form-button">
+                            <button class="form-submit border border-none">Salvar</button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    @endsection

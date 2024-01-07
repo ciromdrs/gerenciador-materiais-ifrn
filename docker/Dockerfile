@@ -12,7 +12,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
     php-curl \
     php-xml \
     php-mbstring \
-    php-xdebug
+    php-xdebug \
+    unzip \
+    7zip
 
 
 # Install Composer
@@ -27,6 +29,9 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 # Install SQLite
 RUN apt install -y sqlite3 php-sqlite3
 
+
+# Install node
+RUN apt install -y nodejs
 
 WORKDIR /app
 
