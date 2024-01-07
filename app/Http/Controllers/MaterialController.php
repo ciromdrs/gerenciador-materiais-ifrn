@@ -101,7 +101,7 @@ class MaterialController extends Controller
                 }
             }
         } catch (\Throwable $th) {
-            // TODO: Tratar excessão específica para caso não tenha foto
+            // TODO: Tratar exceção específica para caso não tenha foto
             $path = $file->storeAs('public/materiais', $file->hashName());
 
             Storage::setVisibility($path, 'public');
@@ -166,7 +166,7 @@ class MaterialController extends Controller
                 return back();
             }
         } catch (\Throwable $th) {
-            // TODO: Tratar excessão específica para caso não tenha foto
+            // TODO: Tratar exceção específica para caso não tenha foto
             try {
                 $material->delete();
                 return back();
