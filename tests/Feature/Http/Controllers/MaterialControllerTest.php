@@ -75,16 +75,15 @@ class MaterialControllerTest extends TestCase
     }
 
     /**
-     * TODO: Testar se atualiza um material.
+     * Testar se atualiza um material.
      */
     public function test_update(): void
     {
-        $this->markTestSkipped('Funcionalidade ainda não implementada.');
         $material = Material::first();
 
         $dados = ['nome' => 'novo_nome'];
         $this->withCookies(['suapToken' => 'token-falso'])
-            ->patch(route('materiais.update', $material), $dados);
+            ->post(route('materiais.atualizar', $material), $dados);
 
         $this->assertDatabaseHas('materiais', $dados);
     }
