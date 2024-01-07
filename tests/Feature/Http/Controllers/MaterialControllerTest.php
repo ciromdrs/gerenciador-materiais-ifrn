@@ -60,16 +60,15 @@ class MaterialControllerTest extends TestCase
     }
 
     /**
-     * TODO: Testar se deleta um material.
+     * Testar se deleta um material.
      */
-    public function test_delete(): void
+    public function test_destroy(): void
     {
-        $this->markTestSkipped('Funcionalidade ainda não implementada.');
         $material = Material::first();
         $total = Material::count();
 
         $this->withCookies(['suapToken' => 'token-falso'])
-            ->get(route('materiais.delete', $material));
+            ->get(route('materiais.destroy', $material));
 
         $this->assertModelMissing($material);
         $this->assertDatabaseCount('materiais', $total - 1);
