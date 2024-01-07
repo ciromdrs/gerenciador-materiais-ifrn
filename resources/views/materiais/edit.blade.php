@@ -23,6 +23,7 @@
 
                 <div class="row">
                     <div class="col">
+                        <!-- TODO: Considerar quando não tem categorias -->
                         <h2 style="font-size: 20px">Categorias desse material</h2>
                         <p>Selecione a que deseja remover</p>
                         @foreach ($material->categorias as $categoria)

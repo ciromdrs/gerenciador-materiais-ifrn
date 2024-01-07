@@ -16,6 +16,8 @@ class CategoriaFactory extends Factory
      */
     public function definition(): array
     {
+        /* TODO: Adicionar Cat `i` (como em MaterialFactory) para evitar nomes
+           repetidos. */
         return [
             'nome' => fake()->word(),
         ];

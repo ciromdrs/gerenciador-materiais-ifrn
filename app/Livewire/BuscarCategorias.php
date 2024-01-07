@@ -16,6 +16,10 @@ class BuscarCategorias extends Component
 
     public function render()
     {
+        /* TODO: Falha de segurança "SQL Injection"!
+           Passar categoria como parâmetro em vez de concatenação simples de
+           string.
+        */
         $this->categorias= \DB::table('categorias')->where('nome','like',$this->categoria.'%')->orderBy('nome','asc')->get();    
         return view('livewire.buscar-categorias',['categorias'=>$this->categorias]); 
     }
