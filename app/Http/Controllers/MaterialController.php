@@ -29,47 +29,36 @@ class MaterialController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Cria um material.
      */
     public function store(ValidacaoMaterial $request)
     {
-        //pegando a possível foto
+        // Cria o material
+        $material = Material::create($request->all());
+        
+        // Pega a possível foto
         $file = $request->file('foto');
+        // Verifica se tem foto
+        if ($file) {
+            // Salva a foto
+            $path = $file->storeAs('public/materiais', $file->hashName());
+            
+            Storage::setVisibility($path, 'public');
 
-        //capturando as categorias
-        $categorias = $request->categorias;
-
-        if ($categorias) {
-
-            //é preciso ter categorias para criar um material
-            $material = Material::create($request->all());
-
-            //verificando se tem foto
-            if ($file) {
-
-                //salvando a foto
-                $path = $file->storeAs('public/materiais', $file->hashName());
-
-                Storage::setVisibility($path, 'public');
-
-                //salvando o registro
-                Arquivo::create([
-                    'material_id' => $material->id,
-                    'path' => $path,
-                ]);
-            }
-
-            //salvando as categorias
-            for ($i = 0; $i < sizeof($categorias); $i++) {
-                $material->categorias()->attach($categorias[$i]);
-            }
-
-            return back();
-        } else {
-
-            //caso nenhuma categoria seja passada
-            return back()->withErrors(['categoria-erro' => "Nenhuma categoria foi fornecida"]);
+            // Salva o registro do arquivo da foto
+            Arquivo::create([
+                'material_id' => $material->id,
+                'path' => $path,
+            ]);
         }
+        
+        // Salva as categorias
+        $categorias = $request->categorias;
+        for ($i = 0; $i < sizeof($categorias); $i++) {
+            $material->categorias()->attach($categorias[$i]);
+        }
+
+        return back();
     }
 
     /**

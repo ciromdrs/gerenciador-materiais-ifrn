@@ -28,13 +28,10 @@ class ValidacaoMaterial extends FormRequest
             'foto' => ['image'],
             // TODO: Reduzir tamanho da imagem antes de salvar
             'foto' => File::image()->max('10mb'),
-            // 'categorias[]' => ['required']
         ];
     }
     public function messages(): array
     {
-        return [
-            // 'categorias[].required' => 'É preciso informar pelo menos uma categoria',
-        ];
+        return [];
     }
 }
