@@ -45,16 +45,15 @@ class MaterialControllerTest extends TestCase
     }
 
     /**
-     * TODO: Testar se exibe a página de edição.
+     * Testar se exibe a página de edição.
      */
     public function test_edit(): void
     {
-        $this->markTestSkipped('Funcionalidade ainda não implementada.');
         $material = Material::first();
 
         $response = $this
             ->withCookies(['suapToken' => 'token-falso'])
-            ->get(route('materiais.edit', $material));
+            ->get(route('materiais.editar', $material));
 
         $response->assertStatus(200);
         $response->assertSee('_token'); # Verificar se tem proteção CSRF
