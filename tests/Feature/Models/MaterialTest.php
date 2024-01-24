@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Models;
 
-use App\Models\Item;
+use App\Models\Local;
 use App\Models\Material;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MaterialTest extends TestCase
@@ -27,10 +26,11 @@ class MaterialTest extends TestCase
     public function test_cria_material(): void
     {
         $material = Material::factory()->create();
+
         $this->assertModelExists($material);
     }
 
-        
+
     /**
      * Testa se altera um material.
      */
@@ -60,37 +60,32 @@ class MaterialTest extends TestCase
         $this->assertModelMissing($material);
     }
 
-
     /**
-     * Testa se adiciona um item.
+     * Testa se salva o local.
      */
-    public function test_adiciona_item(): void
+    public function test_salva_local(): void
     {
-        $material = Material::factory()->create();
-        $total = count($material->itens);
-        
-        $item = Item::factory()->create(['material_id' => $material->id]);
+        $local = Local::factory()->create();
 
-        // Verifica se o material no banco tem o item
-        $material_no_banco = Material::find($material->id);
-        $this->assertCount($total + 1, $material_no_banco->itens);
-        $this->assertEquals($material_no_banco->itens[0]->id, $item->id);
+        Material::factory()->create(['local_id' => $local->id]);
+
+        $this->assertDatabaseHas('materiais', ['local_id' => $local->id]);
     }
 
-
     /**
-     * Testa se remove um item.
+     * Testa se altera o local.
      */
-    public function test_remove_item(): void
+    public function test_altera_local(): void
     {
-        $material = Material::factory()->create();
-        Item::factory()->create(['material_id' => $material->id]);
-        $total = count($material->itens);
+        $local1 = Local::factory()->create();
+        $local2 = Local::factory()->create();
+        $material = Material::factory()->create(['local_id' => $local1->id]);
 
-        $material->itens()->first()->delete();
+        $material->local_id = $local2->id;
+        $material->save();
 
-        // Verifica se o material no banco tem o item
-        $material_no_banco = Material::find($material->id);
-        $this->assertCount($total - 1, $material_no_banco->itens);
+        $this->assertDatabaseMissing('materiais', ['local_id' => $local1->id]);
+        $this->assertDatabaseHas('materiais', ['local_id' => $local2->id]);
     }
+
 }

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,20 +12,19 @@ return new class extends Migration
     {
         Schema::create('materiais', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
+
             $table->string('nome', 255)->unique();
 
-            $table->timestamps();
+            // Estado de conservação
+            $table->string('estado_conservacao', 255);
+
+            $table->text('foto')->nullable();
+
+            $table->unsignedBigInteger('local_id');
+            $table->foreign('local_id')->references('id')->on('locais');
         });
-        Schema::create('categoria_material', function (Blueprint $table) 
-        {
-            //tabela pivot NxN
-            // $table->id();
-            $table->unsignedBigInteger('material_id');
-            $table->unsignedBigInteger('categoria_id');
-            # TODO: Remover CASCADEs
-            $table->foreign('material_id')->references('id')->on('materiais');//->onDelete('CASCADE')->onUpdate('CASCADE');
-            $table->foreign('categoria_id')->references('id')->on('categorias');//->onDelete('CASCADE')->onUpdate('CASCADE');
-        });
+
     }
 
     /**
@@ -34,7 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('materiais');
         Schema::dropIfExists('categoria_material');
+        Schema::dropIfExists('materiais');
     }
 };

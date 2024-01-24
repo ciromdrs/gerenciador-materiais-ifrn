@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\EstadoConservacaoEnum;
+use App\Models\Local;
 use App\Models\Material;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,10 +20,13 @@ class MaterialFactory extends Factory
     public function definition(): array
     {
         $id = Material::max('id') + 1; // Pega o próximo id
+        $locais = Local::all();
 
         return [
             // Usar o id garante que não haverá materiais iguais
             'nome' => "Mat $id " . fake()->word(),
+            'estado_conservacao' => fake()->randomElement(EstadoConservacaoEnum::cases()),
+            'local_id' => fake()->randomElement($locais)->id,
         ];
     }
 }
