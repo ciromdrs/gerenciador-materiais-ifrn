@@ -16,6 +16,15 @@ class CategoriaMaterialPivotTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->artisan('db:seed --class=CategoriaSeeder');
+        $this->artisan('db:seed --class=LocalSeeder');
+        $this->artisan('db:seed --class=MaterialSeeder');
+    }
+
     /**
      * Testa se cria um relacionamento Categoria x Material.
      */
