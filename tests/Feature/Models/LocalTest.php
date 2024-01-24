@@ -3,9 +3,8 @@
 namespace Tests\Feature\Models;
 
 use App\Models\Local;
-use App\Models\Item;
+use App\Models\Material;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LocalTest extends TestCase
@@ -61,34 +60,34 @@ class LocalTest extends TestCase
     }
 
     /**
-     * Testa se adiciona um item.
+     * Testa se adiciona um material.
      */
-    public function test_adiciona_item(): void
+    public function test_adiciona_material(): void
     {
         $local = Local::factory()->create();
-        $total = count($local->itens);
+        $total = count($local->materiais);
         
-        $item = Item::factory()->create(['local_id' => $local->id]);
+        $material = Material::factory()->create(['local_id' => $local->id]);
 
-        // Verifica se o local no banco tem o item
+        // Verifica se o local no banco tem o material
         $local_no_banco = Local::find($local->id);
-        $this->assertCount($total + 1, $local_no_banco->itens);
-        $this->assertEquals($local_no_banco->itens[0]->id, $item->id);
+        $this->assertCount($total + 1, $local_no_banco->materiais);
+        $this->assertEquals($local_no_banco->materiais[0]->id, $material->id);
     }
 
     /**
-     * Testa se remove um item.
+     * Testa se remove um material.
      */
-    public function test_remove_item(): void
+    public function test_remove_material(): void
     {
         $local = Local::factory()->create();
-        Item::factory()->create(['local_id' => $local->id]);
-        $total = count($local->itens);
+        Material::factory()->create(['local_id' => $local->id]);
+        $total = count($local->materiais);
 
-        $local->itens()->first()->delete();
+        $local->materiais()->first()->delete();
 
-        // Verifica se o local no banco tem o item
+        // Verifica se o local no banco tem o material
         $local_no_banco = Local::find($local->id);
-        $this->assertCount($total - 1, $local_no_banco->itens);
+        $this->assertCount($total - 1, $local_no_banco->materiais);
     }
 }
