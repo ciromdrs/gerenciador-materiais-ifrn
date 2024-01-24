@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use App\Models\Categoria;
-use App\Models\Item;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Material extends Model
@@ -17,6 +15,7 @@ class Material extends Model
     protected $fillable = [
         'nome',
         'estado_conservacao',
+        'local_id',
     ];
 
     protected $table = 'materiais';

@@ -15,8 +15,10 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        Material::with('categorias')->orderBy('nome', 'asc')->get();
-        return view('materiais.index');
+        $materiais = Material::with(['categorias'])
+            ->orderBy('nome', 'asc')
+            ->get();
+        return view('materiais.index', ['materiais' => $materiais]);
     }
 
     /**

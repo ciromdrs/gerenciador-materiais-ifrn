@@ -22,9 +22,9 @@ class Local extends Model
     ];
 
 
-    public function itens(): HasMany
+    public function materiais(): HasMany
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Material::class);
     }
 
 }

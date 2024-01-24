@@ -28,6 +28,8 @@ class ValidacaoMaterial extends FormRequest
             'foto' => ['image'],
             // TODO: Reduzir tamanho da imagem antes de salvar
             'foto' => File::image()->max('10mb'),
+            'estado_conservacao' => ['required', 'max:50'],
+            'local_id' => ['required'],
         ];
     }
     public function messages(): array

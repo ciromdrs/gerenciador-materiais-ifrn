@@ -3,9 +3,9 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Material;
+use App\Models\Local;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 #[CoversClass('\App\Http\Controllers\MaterialController')]
@@ -17,6 +17,8 @@ class MaterialControllerTest extends TestCase
     {
         parent::setUp();
 
+        $this->artisan('db:seed --class=CategoriaSeeder');
+        $this->artisan('db:seed --class=LocalSeeder');
         $this->artisan('db:seed --class=MaterialSeeder');
         $this->artisan('db:seed --class=SessionSeeder');
     }
@@ -81,7 +83,11 @@ class MaterialControllerTest extends TestCase
     {
         $material = Material::first();
 
-        $dados = ['nome' => 'novo_nome'];
+        $dados = [
+            'nome' => 'novo_nome',
+            'local_id' => $material->local_id,
+            'estado_conservacao' => $material->estado_conservacao,
+        ];
         $this->withCookies(['suapToken' => 'token-falso'])
             ->post(route('materiais.atualizar', $material), $dados);
 
@@ -93,7 +99,13 @@ class MaterialControllerTest extends TestCase
      */
     public function test_store(): void
     {
-        $dados = ['nome' => 'Novo Material'];
+        $local_id = Local::first()->id;
+
+        $dados = [
+            'nome' => 'Novo Material',
+            'estado_conservacao' => 'bom estado',
+            'local_id' => $local_id,
+        ];
         $total = Material::count();
 
         $this->withCookies(['suapToken' => 'token-falso'])
