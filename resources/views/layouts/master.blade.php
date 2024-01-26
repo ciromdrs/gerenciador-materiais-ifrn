@@ -64,7 +64,6 @@
                     <a class="nav-link scrollto" href="{{ url('/emprestimos/novo') }}">Emprestar</a>
                     <a class="nav-link scrollto" href="{{ url('emprestimos/todos') }}">Emprestados</a>
 
-                    <li><a class="nav-link scrollto  " href="{{ url('itens') }}">Itens</a></li>
                     <li><a class="nav-link scrollto  " href="{{ url('materiais') }}">Materiais</a></li>
                     <li><a class="nav-link scrollto  " href="{{ url('locais') }}">Locais</a></li>
                     <li><a class="nav-link scrollto  " href="{{ url('categorias') }}">Categorias</a></li>
@@ -76,7 +75,6 @@
                                 Adicionar
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/itens/novo">Adicionar Item</a></li>
                                 <li><a class="dropdown-item" href="/materiais/novo">Adicionar Material</a></li>
                                 <li><a class="dropdown-item" href="/locais/novo">Adicionar Local</a></li>
                                 <li><a class="dropdown-item" href="/categorias/nova">Adicionar Categoria</a></li>

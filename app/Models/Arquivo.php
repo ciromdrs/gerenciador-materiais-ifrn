@@ -9,15 +9,9 @@ class Arquivo extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'item_id',
         'material_id',
-        'path',
+        'caminho',
     ];
-
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
-    }
 
     public function material()
     {

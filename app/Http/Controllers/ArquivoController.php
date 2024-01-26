@@ -12,7 +12,7 @@ class ArquivoController extends Controller
     {
         if ($arquivo) {
             try {
-                Storage::delete($arquivo->path);
+                Storage::delete($arquivo->caminho);
                 $arquivo->delete();
                 return back();
             } catch (\Throwable $th) {

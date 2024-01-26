@@ -13,35 +13,35 @@
                     <thead>
                         <tr>
                             <th scope="col">Foto</th>   
-                            <th scope="col">Nome do item</th>
+                            <th scope="col">Material</th>
                             <th scope="col">Estado de conservação</th>
                             <th scope="col">Quem emprestou</th>
                             <th scope="col">Quem recebeu</th>
-                            <th scope="col">Horário do empréstimo</th>
+                            <th scope="col">Hora do empréstimo</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{-- <form action="{{ route('emprestimos.devolver', $emprestimo->id) }}" method="POST"> --}}
-                        @foreach ($emprestimo->itens as $item)
+                        @foreach ($emprestimo->materiais as $material)
                             @php
                                 try {
-                                    $path = Storage::url($item->arquivo->path);
+                                    $caminho = Storage::url($material->arquivo->caminho);
                                 } catch (\Throwable $th) {
-                                    $path = '';
+                                    $caminho = '';
                                 }
                             @endphp
                             <tr class="">
                                 <td>
                                     <div class="mx-2" style="width:100%;">
-                                        <img style="height: 100px" src="{{ $path }}" alt="Nenhuma foto encontrada">
+                                        <img style="height: 100px" src="{{ $caminho }}" alt="Nenhuma foto encontrada">
                                     </div>
                                 </td>
                                 <td>
-                                    {{-- <input name="itens[]" value="{{ $item->id }}" type="checkbox"> --}}
-                                    {{ $item->material->nome }}
+                                    {{-- <input name="materiais[]" value="{{ $material->id }}" type="checkbox"> --}}
+                                    {{ $material->nome }}
                                 </td>
                                 <td>
-                                    {{ $item->estado_conservacao }}
+                                    {{ $material->estado_conservacao }}
                                 </td>
                                 <td>
                                     {{ $emprestimo->usuario_que_emprestou }}
@@ -65,8 +65,8 @@
 
             <form action="{{ route('emprestimos.devolver', $emprestimo->id) }}" class="mt-2" method="POST">
                 @csrf
-                @foreach ($emprestimo->itens as $item)
-                    <input name="itens[]" value="{{ $item->id }}" hidden checked type="checkbox">
+                @foreach ($emprestimo->materiais as $material)
+                    <input name="materiais[]" value="{{ $material->id }}" hidden checked type="checkbox">
                 @endforeach
                 <button class="btn btn-success">Devolver</button>
             </form>

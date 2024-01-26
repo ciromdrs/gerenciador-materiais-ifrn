@@ -79,18 +79,18 @@
 
         @php
             try {
-                $path = Storage::url($material->arquivo->path);
+                $caminho = Storage::url($material->arquivo->caminho);
             } catch (\Throwable $th) {
-                $path = null;
+                $caminho = null;
             }
         @endphp
-        @if ($path != null)
+        @if ($caminho != null)
             <!-- Tratar else -->
             <div class="signup-image" style="display:flex; align-itens:center; flex-direction:column;">
                 <div class="text-center">
                     <h1>Foto do Material:</h1>
                 </div>
-                <img src="{{ $path }}"alt="Foto do item" style="height:auto width:auto;">
+                <img src="{{ $caminho }}"alt="Foto do item" style="height:auto width:auto;">
                 <div class="mt-3">
                     <a href="{{ route('arquivos.apagar', $material->arquivo->id) }}" class="btn btn-success">Apagar</a>
                 </div>

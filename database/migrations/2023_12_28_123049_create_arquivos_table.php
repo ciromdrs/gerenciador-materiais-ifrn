@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('arquivos', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
 
-            $table->text('path');
+            $table->text('caminho');
 
             $table->unsignedBigInteger('material_id')->nullable();
             $table->foreign('material_id')->references('id')->on('materiais');
-
-            $table->unsignedBigInteger('item_id')->nullable();
-            $table->foreign('item_id')->references('id')->on('itens');
-            $table->timestamps();
         });
     }
 

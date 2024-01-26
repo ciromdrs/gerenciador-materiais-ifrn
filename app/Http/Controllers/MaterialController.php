@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Material;
 use App\Http\Requests\ValidacaoMaterial;
 use App\Models\Arquivo;
 use App\Models\Categoria;
+use App\Models\Local;
+use App\Models\Material;
 use Illuminate\Support\Facades\Storage;
 
 class MaterialController extends Controller
@@ -27,7 +28,11 @@ class MaterialController extends Controller
     public function create()
     {
         $categorias = Categoria::orderBy('nome', 'asc')->get();
-        return view('materiais.create', ['categorias' => $categorias]);
+        $locais = Local::orderBy('nome', 'asc')->get();
+        return view(
+            'materiais.create',
+            ['categorias' => $categorias, 'locais' => $locais]
+        );
     }
 
     /**
@@ -36,31 +41,41 @@ class MaterialController extends Controller
     public function store(ValidacaoMaterial $request)
     {
         // Cria o material
+        // TODO: Substituir request->all() pelos campos explícitos
         $material = Material::create($request->all());
-        
-        // Pega a possível foto
-        $file = $request->file('foto');
-        // Verifica se tem foto
-        if ($file) {
-            // Salva a foto
-            $path = $file->storeAs('public/materiais', $file->hashName());
-            
-            Storage::setVisibility($path, 'public');
 
-            // Salva o registro do arquivo da foto
-            Arquivo::create([
-                'material_id' => $material->id,
-                'path' => $path,
-            ]);
+        // Salva a foto, se foi enviada
+        $file = $request->file('foto');
+        if ($file) {
+            $this->salvar_foto($file, $material->id);
         }
-        
+
         // Salva as categorias
-        $categorias = $request->categorias;
-        for ($i = 0; $i < sizeof($categorias); $i++) {
-            $material->categorias()->attach($categorias[$i]);
+        $categoria_ids = $request->get('categorias', []);
+        foreach ($categoria_ids as $id) {
+            $material->categorias()->attach($id);
         }
 
         return back();
+    }
+
+    /**
+     * Salva a foto de um material.
+     * 
+     * @param \Illuminate\Http\UploadedFile $file A foto enviada pelo usuário na requisição.
+     * @param string $material_id O id do material a ser vinculado à foto.
+     */
+    private function salvar_foto($file, $material_id)
+    {
+        $caminho = $file->storeAs('public/materiais', $file->hashName());
+
+        Storage::setVisibility($caminho, 'public');
+
+        // Salva o registro do arquivo da foto
+        Arquivo::create([
+            'material_id' => $material_id,
+            'caminho' => $caminho,
+        ]);
     }
 
     /**
@@ -68,7 +83,10 @@ class MaterialController extends Controller
      */
     public function edit(Material $material)
     {
-        return view('materiais.edit', ['material' => $material, 'categorias' => \App\Models\Categoria::orderBy('nome', 'asc')->get()]);
+        return view('materiais.edit', [
+            'material' => $material,
+            'categorias' => Categoria::orderBy('nome', 'asc')->get()
+        ]);
     }
 
     /**
@@ -76,43 +94,24 @@ class MaterialController extends Controller
      */
     public function update(ValidacaoMaterial $request, Material $material)
     {
-
+        // Caso o usuário tenha enviado uma foto
         $file = $request->file('foto');
-        try {
-            //caso tenha foto, entra aqui
-            if ($file) {
-                if (Storage::exists($material->arquivo->path)) {
-                    //caso tenha uma foto, ele recupera o caminho dessa foto
-                    $path = $material->arquivo->path;
+        if ($file) {
+            // Verifica se já havia uma foto
+            if (Storage::exists($material->arquivo->caminho)) {
+                // Se já havia, apaga
+                $caminho = $material->arquivo->caminho;
+                Storage::delete($caminho);
+                
+                // Salva a nova foto e deixa pública
+                $caminho = $file->storeAs('public/materiais', $file->hashName());
+                Storage::setVisibility($caminho, 'public');                
 
-                    //apaga a foto do sistema
-                    Storage::delete($path);
-
-                    //alterando a visibilidade da foto
-                    Storage::setVisibility($path, 'public');
-
-                    //salvando no sistema
-                    $path = $file->storeAs('public/itens', $file->hashName());
-
-                    //buscando o registro no banco de dados
-                    $arq = Arquivo::find($material->arquivo->id);
-
-                    //atualizando o caminho 
-                    $arq->path = $path;
-                    $arq->save();
-                }
+                // Atualiza o registro do Arquivo com o novo caminho
+                $arq = Arquivo::find($material->arquivo->id);
+                $arq->caminho = $caminho;
+                $arq->save();
             }
-        } catch (\Throwable $th) {
-            // TODO: Tratar exceção específica para caso não tenha foto
-            $path = $file->storeAs('public/materiais', $file->hashName());
-
-            Storage::setVisibility($path, 'public');
-
-            //salvando o registro
-            Arquivo::create([
-                'material_id' => $material->id,
-                'path' => $path,
-            ]);
         }
 
         //capturando os ids das categorias que foram marcadas para serem removidas
@@ -156,25 +155,17 @@ class MaterialController extends Controller
      */
     public function destroy(Material $material)
     {
-        //caso não tenha foto
-        try {
-            //caso tenha foto
-            $path = $material->arquivo->path;
-            if (Storage::exists($path)) {
-                Storage::delete($path);
-                $arq = Arquivo::find($material->arquivo->id);
-                $arq->delete();
-                $material->delete();
-                return back();
+        // Caso tenha categorias, apaga
+        $material->categorias()->detach();
+        // Caso tenha foto, apaga
+        $arq = $material->arquivo;
+        if ($arq) {
+            if (Storage::exists($arq->caminho)) {
+                Storage::delete($arq->caminho);
             }
-        } catch (\Throwable $th) {
-            // TODO: Tratar exceção específica para caso não tenha foto
-            try {
-                $material->delete();
-                return back();
-            } catch (\Throwable $th) {
-                return back()->withException($th);
-            }
+            $arq->delete();
         }
+        $material->delete();
+        return back();
     }
 }

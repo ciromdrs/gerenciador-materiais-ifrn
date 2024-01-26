@@ -14,7 +14,7 @@
                                 <th scope="col">Data e Hora</th>
                                 <th scope="col">Quem Emprestou</th>
                                 <th scope="col">Quem Recebeu</th>
-                                <th scope="col">Item(s)</th>
+                                <th scope="col">Materiais</th>
                                 <th scope="col">Ação</th>
                             </tr>
                         </thead>
@@ -34,21 +34,21 @@
                                     </td>
 
                                     <td>
-                                        {{-- acessando os items desse empréstimo --}}
-                                        @foreach ($emp->itens as $item)
-                                            {{ $item->material->nome }};
+                                        {{-- acessando os material desse empréstimo --}}
+                                        @foreach ($emp->materiais as $material)
+                                            {{ $material->nome }};
                                         @endforeach
                                     </td>
                                     <td>
                                         <form action="{{ route('emprestimos.devolver', $emp->id) }}" class="mt-2"
                                             method="POST">
                                             @csrf
-                                            @foreach ($emp->itens as $item)
-                                                <input name="itens[]" value="{{ $item->id }}" hidden checked
+                                            @foreach ($emp->materiais as $material)
+                                                <input name="materiais[]" value="{{ $material->id }}" hidden checked
                                                     type="checkbox">
                                             @endforeach
-                                            <a class="btn btn-success" href="{{ route('emprestimos.itens', $emp->id) }}">
-                                                Itens </a>
+                                            <a class="btn btn-success" href="{{ route('emprestimos.materiais', $emp->id) }}">
+                                                Materiais </a>
                                             <button class="btn btn-success">Devolver</button>
                                         </form>
                                     </td>

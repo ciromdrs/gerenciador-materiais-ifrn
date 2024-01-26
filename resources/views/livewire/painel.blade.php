@@ -27,50 +27,34 @@
         @foreach ($materiais as $material)
             @php
                 try {
-                    $path = Storage::url($material->arquivo->path);
+                    $caminho = Storage::url($material->arquivo->caminho);
                 } catch (\Throwable $th) {
-                    $path = null;
+                    $caminho = null;
                 }
             @endphp
             <div class="col-lg-4 col-md-6">
                 <a href="/emprestimos/novo">
                     <div class="portfolio-wrap">
 
-                        @if ($path != null)
-                            <div class="text-center">
-
-                                <img src="{{ $path }}" style="height: 200px" class="img-fluid" alt="Imagem não encontrada">
-
-                                <div class="portfolio-info">
-                                    <div class="portfolio-links">
-                                        {{-- <a href="https://lncimg.lance.com.br/cdn-cgi/image/width=1920,quality=75,format=webp/uploads/2023/04/03/642aded4857be.jpeg"
-                                        data-gallery="portfolioGallery" class="portfolio-lightbox"
-                                        title="Ampliar Foto"><i class="bx bx-plus"></i></a>
-                                    <a href="/itens/editar" title="Editar"><i class="bx bx-edit"></i></a> --}}
-                                    </div>
-                                    <div class="card" style="border-radius:50px">
-                                        <p class="m-1" style="color: black;">{{ $material->nome }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="text-center">
+                        <div class="text-center">
+                            @if ($caminho != null)
+                                <img src="{{ $caminho }}" style="height: 200px" class="img-fluid" alt="Foto do Material">
+                            @else
                                 <img src="{{ asset('imagens/sem-imagem.jpg') }}" style="height: 200px" class="img-fluid"
-                                    alt="Imagem não encontrada">
-
-                                <div class="portfolio-info">
-                                    <div class="portfolio-links">
-                                        {{-- <a href="https://lncimg.lance.com.br/cdn-cgi/image/width=1920,quality=75,format=webp/uploads/2023/04/03/642aded4857be.jpeg"
-                                        data-gallery="portfolioGallery" class="portfolio-lightbox"
-                                        title="Ampliar Foto"><i class="bx bx-plus"></i></a>
-                                    <a href="/itens/editar" title="Editar"><i class="bx bx-edit"></i></a> --}}
-                                        <div class="card" style="border-radius:50px">
-                                            <p class="m-1" style="color: black;">{{ $material->nome }}</p>
-                                        </div>
-                                    </div>
+                                    alt="Material sem foto">
+                            @endif
+                            <div class="portfolio-info">
+                                <div class="portfolio-links">
+                                    {{-- <a href="https://lncimg.lance.com.br/cdn-cgi/image/width=1920,quality=75,format=webp/uploads/2023/04/03/642aded4857be.jpeg"
+                                    data-gallery="portfolioGallery" class="portfolio-lightbox"
+                                    title="Ampliar Foto"><i class="bx bx-plus"></i></a>
+                                <a href="{{ route('materiais.editar') }}" title="Editar"><i class="bx bx-edit"></i></a> --}}
+                                </div>
+                                <div class="card" style="border-radius:50px">
+                                    <p class="m-1" style="color: black;">{{ $material->nome }}</p>
                                 </div>
                             </div>
-                        @endif
+                        </div>
 
 
                     </div>

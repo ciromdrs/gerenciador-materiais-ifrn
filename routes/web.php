@@ -144,40 +144,6 @@ Route::middleware(['suapToken'])
                 }
             });
 
-        Route::name('itens.')
-            ->prefix('/itens')
-            ->controller(ItemController::class)
-            ->group(function () {
-
-                /*
-                    Rotas para o controlador de Item.
-                */
-                Route::name('index')->get('', 'index');
-
-                /*Esta rota está retornando a view onde mostra o formulário para cadastrar um novo item*/
-                Route::name('novo')->get('/novo', 'create');
-
-                Route::name('store')->post('', 'store');
-
-                /*Esta rota está levando para a função vai processar o empréstimo do item*/
-                Route::name('alugar')->get('/alugar', 'alugar');
-
-                /*Esta rota está retornando a view onde mostra o formulário para editar um item*/
-                Route::name('editar')->get('/editar/{item}', 'edit');
-
-                /*Esta rota está retornando a página que lista os items que estão alugados*/
-                Route::name('alugados')->get('/alugados', 'alugados');
-
-                # TODO: Deveria ser um PUT.
-                Route::name('update')->post('/{item}', 'update');
-
-                Route::name('deletar')->get('/deletar/{item}', 'destroy');
-
-                /*Esta rota está levando para a função que processa a devolução do item*/
-                Route::name('devolver')->get('/devolver', 'devolver');
-            });
-
-
         /**
          * Rotas relacionadas a Categorias.
          */
@@ -213,7 +179,7 @@ Route::middleware(['suapToken'])
                 Route::name('create')->get('/novo', 'create');
                 Route::name('store')->post('/store', 'store');
                 Route::name('index')->get('/todos', 'index');
-                Route::name('itens')->get('/{emprestimo}/itens', 'itens');
+                Route::name('materiais')->get('/{emprestimo}/materiais', 'itens');
                 Route::name('devolver')->post('/{emprestimo}', 'devolver');
             });
 

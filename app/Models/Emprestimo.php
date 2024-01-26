@@ -17,7 +17,7 @@ class Emprestimo extends Model
         // 'usuario_que_autorizou',
         // 'user_who_authorized_id',
 
-        //quem emprestou o item
+        //quem emprestou o material
         'usuario_que_emprestou',
         // 'user_who_delivered_id',
 
@@ -30,8 +30,8 @@ class Emprestimo extends Model
         // 'user_who_returned_id',
     ];
 
-    public function itens(): BelongsToMany
+    public function materiais(): BelongsToMany
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Material::class);
     }
 }
