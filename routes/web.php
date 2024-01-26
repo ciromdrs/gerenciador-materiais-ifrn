@@ -31,14 +31,10 @@ Route::name('em-producao')
         }
     );
 
-// GuestMiddleware desativado temporariamente porque estava entrando em loop de redirecionamento
-// Route::middleware(['GuestMiddleware'])
-//     ->group(function () {
 Route::name('home')
     ->get('/', function () {
         return view('welcome');
     });
-// });
 
 # TODO: Mudar para /login-view
 Route::name('login.')
