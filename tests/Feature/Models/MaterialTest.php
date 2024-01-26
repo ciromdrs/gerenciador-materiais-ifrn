@@ -72,9 +72,10 @@ class MaterialTest extends TestCase
     {
         $local = Local::factory()->create();
 
-        Material::factory()->create(['local_id' => $local->id]);
+        $material = Material::factory()->create(['local_id' => $local->id]);
 
         $this->assertDatabaseHas('materiais', ['local_id' => $local->id]);
+        $this->assertEquals($local->id, $material->local->id);
     }
 
     /**
