@@ -44,4 +44,8 @@ RUN sqlite3 database/database.db
 EXPOSE 8000
 
 
+# Set Xdebug coverage
+ENV XDEBUG_MODE=coverage
+
+
 ENTRYPOINT ["bash"]
