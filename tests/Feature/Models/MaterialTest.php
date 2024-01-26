@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Models;
 
+use App\Models\Categoria;
 use App\Models\Local;
 use App\Models\Material;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -88,4 +89,23 @@ class MaterialTest extends TestCase
         $this->assertDatabaseHas('materiais', ['local_id' => $local2->id]);
     }
 
+}
+
+    /**
+     * Testa se salva as categorias.
+     */
+    public function test_salva_categorias(): void
+    {
+        $cat1 = Categoria::factory()->create();
+        $cat2 = Categoria::factory()->create();
+        $material = Material::factory()->create();
+
+        $material->categorias()->attach([$cat1->id, $cat2->id]);
+        
+        $this->assertCount(2, $material->categorias);
+        $this->assertCount(1, $cat1->materiais);
+        $this->assertCount(1, $cat2->materiais);
+        $this->assertEquals($cat1->materiais[0]->id, $material->id);
+        $this->assertEquals($cat2->materiais[0]->id, $material->id);
+    }
 }
