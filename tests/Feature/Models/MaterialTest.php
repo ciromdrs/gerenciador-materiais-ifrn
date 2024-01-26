@@ -9,6 +9,9 @@ use App\Models\Material;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * @covers App\Models\Material
+ */
 class MaterialTest extends TestCase
 {
     use RefreshDatabase;
