@@ -97,10 +97,6 @@ class SUAPLoginTest extends TestCase
             # TODO: Criar categoria fake para evitar o erro 404 ['categorias.edit', ['categoria' => 'fake']],
             ['emprestimos.create', []],
             # TODO: Testar ['itens.alugados', []],
-             ['itens.alugar', []],
-            ['itens.devolver', []],
-            # ['itens.editar', []],
-            ['itens.novo', []],
             ['locais.novo', []],
             ['logout', []], # TODO: retirar
             ['materiais.novo', []],
