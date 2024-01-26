@@ -6,6 +6,7 @@ use App\Enums\EstadoConservacaoEnum;
 use App\Models\Categoria;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -32,13 +33,13 @@ class Material extends Model
         return $this->belongsToMany(Categoria::class);
     }
 
-    public function local(): HasOne
+    public function local(): BelongsTo
     {
-        return $this->hasOne(Local::class);
+        return $this->belongsTo(Local::class);
     }
 
     // TODO: Renomear para foto
-    public function arquivo()
+    public function arquivo(): HasOne
     {
         return $this->hasOne(Arquivo::class);
     }
