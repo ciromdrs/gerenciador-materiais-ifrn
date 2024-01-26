@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Models;
 
+use App\Models\Arquivo;
 use App\Models\Categoria;
 use App\Models\Local;
 use App\Models\Material;
@@ -89,7 +90,21 @@ class MaterialTest extends TestCase
         $this->assertDatabaseHas('materiais', ['local_id' => $local2->id]);
     }
 
-}
+    /**
+     * Testa se associa o material ao arquivo da foto.
+     */
+    public function test_salva_arquivo(): void
+    {
+        $material = Material::factory()->create();
+        $caminho = 'um/caminho/qualquer';
+
+        $arquivo = Arquivo::create([
+            'material_id' => $material->id,
+            'caminho' => $caminho,
+        ]);
+
+        $this->assertEquals($material->arquivo->id, $arquivo->id);
+    }
 
     /**
      * Testa se salva as categorias.
