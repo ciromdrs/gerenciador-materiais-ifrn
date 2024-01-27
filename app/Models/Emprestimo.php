@@ -10,24 +10,13 @@ class Emprestimo extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
-
-        //quem autorziou o emprestimo
-        // 'usuario_que_autorizou',
-        // 'user_who_authorized_id',
-
-        //quem emprestou o material
+        // Servidor que entregou os materiais
         'usuario_que_emprestou',
-        // 'user_who_delivered_id',
-
-        //servidor que pegou de volta
+        // Servidor que recebeu de volta
         'usuario_que_recebeu',
-        // 'user_who_received_id',
-
-        //aluno aue foi devolver ao servidor
+        // Aluno ou servidor que foi devolver
         'usuario_que_devolveu',
-        // 'user_who_returned_id',
     ];
 
     public function materiais(): BelongsToMany
