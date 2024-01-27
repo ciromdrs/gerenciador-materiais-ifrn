@@ -5,6 +5,7 @@
                 <div class="d-flex justify-content-between mb-3">
                     <h1 style="font-size: 30px" class="pb-2 ">Emprestimos de itens</h1>
                     <select wire:model.live="filtro_material" class="form-control form-control-sm" id="FormControlSelect1">
+                        <!-- TODO: Colocar um filtro de texto geral, que busque em todos os atributos de Material -->
                         <option selected value="0">Todos</option>
                         @foreach ($materiais as $material)
                             <option value="{{ $material->id }}">{{ $material->nome }}</option>
