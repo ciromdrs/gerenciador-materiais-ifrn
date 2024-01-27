@@ -4,10 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Categoria;
-use App\Models\Local;
 use Illuminate\Database\Seeder;
-use Illuminate\Validation\Rules\Can;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,6 +24,7 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             LocalSeeder::class,
             MaterialSeeder::class,
+            EmprestimoSeeder::class,
             SessionSeeder::class,
         ]);
     }
