@@ -85,7 +85,9 @@ class EmprestimoTest extends TestCase
      */
     public function test_nao_apaga_com_materiais(): void
     {
-        $emp = Emprestimo::first();
+        $emp = Emprestimo::create();
+        $materiais = Material::factory(3)->create();
+        $emp->materiais()->attach($materiais);
 
         $this->expectException('\Illuminate\Database\QueryException');
 
