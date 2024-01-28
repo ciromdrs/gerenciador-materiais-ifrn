@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('material_id')->references('id')->on('materiais');
             $table->unsignedBigInteger('emprestimo_id');
             $table->foreign('emprestimo_id')->references('id')->on('emprestimos');
+            $table->primary(['material_id', 'emprestimo_id']);
         });
 
     }
