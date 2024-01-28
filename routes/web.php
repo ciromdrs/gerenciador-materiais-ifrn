@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ArquivoController;
-use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EmprestimoController;
