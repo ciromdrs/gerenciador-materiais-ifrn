@@ -16,7 +16,7 @@
             </div>
 
             <div class="form-group">
-                <select class="custom-select " required id="CustomSelect" name="local_id"
+                <select class="custom-select " required name="local_id" placeholder="Local"
                     value="{{ @old('local_id') }}">
 
                     @foreach ($locais as $local)
@@ -30,9 +30,12 @@
             </div>
 
             <div class="form-group">
-                <input type="text" required name="estado_conservacao" placeholder="Estado de conservação"
-                    value="{{ @old('estado_conservacao') }}" />
-
+                <select class="custom-select " required name="estado_conservacao" placeholder="Estado de conservação"
+                    value="{{ @old('estado_conservacao') }}">
+                    @foreach ($estados_conservacao as $e)
+                    <option value="{{ $e->value }}">{{ $e->value }}</option>
+                    @endforeach
+                </select>
                 @error('estado_conservacao')
                 <span class="badge bg-warning">{{ $message }}</span>
                 @enderror

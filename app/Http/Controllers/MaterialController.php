@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EstadoConservacaoEnum;
 use App\Http\Requests\ValidacaoMaterial;
 use App\Models\Arquivo;
 use App\Models\Categoria;
@@ -31,7 +32,11 @@ class MaterialController extends Controller
         $locais = Local::orderBy('nome', 'asc')->get();
         return view(
             'materiais.create',
-            ['categorias' => $categorias, 'locais' => $locais]
+            [
+                'categorias' => $categorias,
+                'locais' => $locais,
+                'estados_conservacao' => EstadoConservacaoEnum::cases(),
+            ]
         );
     }
 
