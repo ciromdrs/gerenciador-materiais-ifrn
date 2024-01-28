@@ -69,8 +69,6 @@ class MaterialController extends Controller
     {
         $caminho = $file->storeAs('public/materiais', $file->hashName());
 
-        Storage::setVisibility($caminho, 'public');
-
         // Salva o registro do arquivo da foto
         Arquivo::create([
             'material_id' => $material_id,
@@ -102,10 +100,9 @@ class MaterialController extends Controller
                 // Se já havia, apaga
                 $caminho = $material->arquivo->caminho;
                 Storage::delete($caminho);
-                
+
                 // Salva a nova foto e deixa pública
                 $caminho = $file->storeAs('public/materiais', $file->hashName());
-                Storage::setVisibility($caminho, 'public');                
 
                 // Atualiza o registro do Arquivo com o novo caminho
                 $arq = Arquivo::find($material->arquivo->id);
