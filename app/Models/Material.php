@@ -60,19 +60,32 @@ class Material extends Model
                 return [false, 'Danificado'];
         }
         // Está em bom estado; verifica se está emprestado
+        $atual = $this->emprestimo_atual();
+        if ($atual != null) {
+            return [false, "Emprestado a {$atual->usuario_que_recebeu}"];
+        }
+        // Está em bom estado e não está emprestado, então está disponível
+        return [true, ''];
+    }
+
+    /**
+     * Busca o empréstimo atual de um material.
+     * 
+     * @return Emprestimo|null o empréstimo atual ou null, caso não haja.
+     */
+    public function emprestimo_atual()
+    {
         $dados = \DB::table('emprestimo_material')
-            ->join('emprestimos', 'emprestimos.id', '=', 'emprestimo_material.emprestimo_id')
-            ->join('materiais', 'materiais.id', '=', 'emprestimo_material.material_id')
-            ->select('emprestimos.id')
+            ->join('materiais', 'emprestimo_material.material_id', '=', $this->id)
+            ->select('emprestimo_material.emprestimo_id')
             ->limit(1)
             /* TODO: Verificar se o empréstimo foi devolvido.
              * Atualmente, quando um empréstimo é devolvido, ele é apagado do banco,
              * então o fato de ele existir significa que não foi devolvido. */
             ->get();
-        if (count($dados) > 0) {
-            $emprestimo = Emprestimo::find($dados[0]->id);
-            return [false, "Emprestado a {$emprestimo->usuario_que_recebeu}"];
+        if (count($dados)) {
+            return Emprestimo::find($dados[0]->emprestimo_id);
         }
-        return [true, ''];
+        return null;
     }
 }

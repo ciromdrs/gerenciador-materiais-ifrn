@@ -122,7 +122,7 @@ class MaterialTest extends TestCase
         $material = Material::factory()->create();
 
         $material->categorias()->attach([$cat1->id, $cat2->id]);
-        
+
         $this->assertCount(2, $material->categorias);
         $this->assertCount(1, $cat1->materiais);
         $this->assertCount(1, $cat2->materiais);
@@ -189,10 +189,31 @@ class MaterialTest extends TestCase
             'usuario_que_devolveu' => 789,
         ]);
         $emp->materiais()->attach($mat);
-        
+
         [$disponivel, $motivo] = $mat->disponivel();
 
         $this->assertFalse($disponivel);
         $this->assertStringContainsStringIgnoringCase('emprestado', $motivo);
+    }
+
+    /**
+     * Bug: Testa a disponibilidade quando outro Material é emprestado.
+     */
+    public function test_bug_disponivel_se_outro_material_emprestado(): void
+    {
+        [$mat1, $mat2] = Material::factory(2)->create([
+            'estado_conservacao' => EstadoConservacaoEnum::EmBomEstado->value
+        ]);
+        $emp = Emprestimo::create([
+            'usuario_que_emprestou' => 123,
+            'usuario_que_recebeu' => 456,
+            'usuario_que_devolveu' => 789,
+        ]);
+        $emp->materiais()->attach($mat1);
+
+        [$disponivel, $motivo] = $mat2->disponivel();
+
+        $this->assertTrue($disponivel);
+        $this->assertEmpty($motivo);
     }
 }
