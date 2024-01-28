@@ -19,7 +19,10 @@ class EmprestimoSeeder extends Seeder
         $materiais = fake()->randomElements(Material::all());
         for ($i = 0; $i < 3; $i++) {
             foreach ($materiais as $mat) {
-                $emp->materiais()->attach($mat);
+                $disp = $mat->disponivel()[0];
+                if ($disp) {
+                    $emp->materiais()->attach($mat);
+                }
             }
         }
     }
