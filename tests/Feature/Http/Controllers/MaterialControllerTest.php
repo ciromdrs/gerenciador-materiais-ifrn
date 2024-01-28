@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Enums\EstadoConservacaoEnum;
 use App\Models\Material;
 use App\Models\Local;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -86,7 +87,7 @@ class MaterialControllerTest extends TestCase
         $dados = [
             'nome' => 'novo_nome',
             'local_id' => $material->local_id,
-            'estado_conservacao' => $material->estado_conservacao,
+            'estado_conservacao' => $material->estado_conservacao->value,
         ];
         $this->withCookies(['suapToken' => 'token-falso'])
             ->post(route('materiais.atualizar', $material), $dados);
@@ -103,14 +104,14 @@ class MaterialControllerTest extends TestCase
 
         $dados = [
             'nome' => 'Novo Material',
-            'estado_conservacao' => 'bom estado',
+            'estado_conservacao' => EstadoConservacaoEnum::EmBomEstado->value,
             'local_id' => $local_id,
         ];
         $total = Material::count();
 
         $this->withCookies(['suapToken' => 'token-falso'])
             ->post(route('materiais.salvar'), $dados);
-            
+
         $this->assertDatabaseHas('materiais', $dados);
         $this->assertDatabaseCount('materiais', $total + 1);
     }
