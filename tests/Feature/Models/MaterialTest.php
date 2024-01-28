@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Models;
 
+use App\Enums\EstadoConservacaoEnum;
 use App\Models\Arquivo;
 use App\Models\Categoria;
+use App\Models\Emprestimo;
 use App\Models\Local;
 use App\Models\Material;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -126,5 +128,71 @@ class MaterialTest extends TestCase
         $this->assertCount(1, $cat2->materiais);
         $this->assertEquals($cat1->materiais[0]->id, $material->id);
         $this->assertEquals($cat2->materiais[0]->id, $material->id);
+    }
+
+    /**
+     * Testa a disponibilidade de um Material disponível.
+     */
+    public function test_disponivel(): void
+    {
+        $mat = Material::factory()->create([
+            'estado_conservacao' => EstadoConservacaoEnum::EmBomEstado->value
+        ]);
+
+        [$disponivel, $motivo] = $mat->disponivel();
+
+        $this->assertTrue($disponivel);
+        $this->assertEmpty($motivo);
+    }
+
+    /**
+     * Testa a disponibilidade de um Material em manutenção.
+     */
+    public function test_indisponivel_em_manutencao(): void
+    {
+        $mat = Material::factory()->create([
+            'estado_conservacao' => EstadoConservacaoEnum::EmManutencao->value
+        ]);
+
+        [$disponivel, $motivo] = $mat->disponivel();
+
+        $this->assertFalse($disponivel);
+        $this->assertStringContainsStringIgnoringCase('manuten', $motivo);
+    }
+
+    /**
+     * Testa a disponibilidade de um Material em danificado.
+     */
+    public function test_indisponivel_danificado(): void
+    {
+        $mat = Material::factory()->create([
+            'estado_conservacao' => EstadoConservacaoEnum::Danificado->value
+        ]);
+
+        [$disponivel, $motivo] = $mat->disponivel();
+
+        $this->assertFalse($disponivel);
+        $this->assertStringContainsStringIgnoringCase('danificado', $motivo);
+    }
+
+    /**
+     * Testa a disponibilidade de um Material emprestado.
+     */
+    public function test_indisponivel_emprestado(): void
+    {
+        $mat = Material::factory()->create([
+            'estado_conservacao' => EstadoConservacaoEnum::EmBomEstado->value
+        ]);
+        $emp = Emprestimo::create([
+            'usuario_que_emprestou' => 123,
+            'usuario_que_recebeu' => 456,
+            'usuario_que_devolveu' => 789,
+        ]);
+        $emp->materiais()->attach($mat);
+        
+        [$disponivel, $motivo] = $mat->disponivel();
+
+        $this->assertFalse($disponivel);
+        $this->assertStringContainsStringIgnoringCase('emprestado', $motivo);
     }
 }
