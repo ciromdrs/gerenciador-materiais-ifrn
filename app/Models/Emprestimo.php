@@ -13,7 +13,8 @@ class Emprestimo extends Model
     protected $fillable = [
         // Servidor que entregou os materiais
         'usuario_que_emprestou',
-        // Servidor que recebeu de volta
+        /* BUG: Atualmente é usado para guardar a pessoa que pegou os materiais.
+         * Deveria ser o servidor que recebeu a devolução. */
         'usuario_que_recebeu',
         // Aluno ou servidor que foi devolver
         'usuario_que_devolveu',

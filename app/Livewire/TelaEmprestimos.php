@@ -2,104 +2,122 @@
 
 namespace App\Livewire;
 
-use App\Models\Item;
 use App\Models\Emprestimo;
 use App\Models\Material;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class TelaEmprestimos extends Component
 {
-    public $itens = [];
     public $materiais = [];
-    public $carrinho = [];
-    public $remove = [];
-    public $ok = [];
-    public $responsavel = null;
-    public $filtro_material = null;
-    public $msg = null;
+    public $selecionados = [];
+    public $responsavel = '';
+    public $filtro_material = '';
+    public $msg = '';
 
     public function mount()
     {
-        $this->itens = Item::all();
+        $this->materiais = Material::all();
     }
 
     public function emprestar()
     {
-        if (!$this->carrinho || !$this->responsavel) {//verifica algum dos campos está vazio, se tiver nada faz
+        if (!$this->selecionados || !$this->responsavel) { //verifica algum dos campos está vazio, se tiver nada faz
             // TODO: Reescrever ifs ternários na forma $a = teste ? valor_se_true : valor_se_false
-            $this->carrinho==null ?  $this->msg="Nada foi selecionado": "";
-            $this->responsavel==null ?  $this->msg="Informe uma matrícula": "";
-        } else {//se não tiver vazio, cai dentro desse else
-            $this->msg=null;
+            $this->selecionados == null ? $this->msg = "Nada foi selecionado" : "";
+            $this->responsavel == null ? $this->msg = "Informe uma matrícula" : "";
+            return;
+        }
+        $this->msg = null;
+        try {
+            // Trabalha em uma transação para ficar fácil desfazer depois
+            \DB::beginTransaction();
+            // Cria o empréstimo
             $emprestimo = Emprestimo::create([
                 'usuario_que_emprestou' => \App\Models\Session::first()->identificacao,
                 'usuario_que_recebeu' => $this->responsavel,
             ]);
-            $itens = $this->carrinho;
-            
-            //Esse try/catch é importante porque caso exista algum erro em anexar os itens a um emprestimo, ele desnexa se algum existir e apagar o empréstimo para que ele
-            //não fique redundante
-            try {
-                for ($i = 0; $i < sizeof($itens); $i++) {
-                    $emprestimo->itens()->attach($itens[$i]);
-                    $itens[$i]->disponibilidade = false;
-                    $itens[$i]->save();
+            // Associa os materiais selecionados
+            for ($i = 0; $i < sizeof($this->selecionados); $i++) {
+                $emprestimo->materiais()->attach($this->selecionados[$i]);
+                $this->selecionados[$i]->save();
+            }
+            // Encerra a transação
+            \DB::commit();
+        } catch (\Throwable $th) {
+            // Desfaz a transação
+            \DB::rollBack();
+        }
+        $this->responsavel = "";
+        $this->selecionados = [];
+    }
+
+    public function adicionar(Material $material)
+    {
+        if ($material->disponivel()[0]) {
+            // Verifica se o material já foi selecionado
+            $ja_selecionou = false;
+            foreach ($this->selecionados as $sel) {
+                if ($material->id == $sel->id) {
+                    $ja_selecionou = true;
+                    break;
                 }
-                $this->carrinho = [];
-                $this->responsavel = "";
-            } catch (\Throwable $th) {
-                $this->carrinho = [];
-                $this->responsavel = "";
-                $emprestimo->itens()->detach();
-                $emprestimo->delete();
+            }
+            if (!$ja_selecionou) {
+                // Material não foi selecionado, seleciona-o
+                $this->selecionados[] = $material;
             }
         }
     }
 
-    public function adicionar(Item $item)
+    public function remover(Material $material)
     {
-        //NÃO APAGAR!!!!!!!!!!!!!!!
-        //essa função remove o item da array itens e coloca o item na lista de carrinho, é apenas visual, deixei salva caso precise modificar
-        // if (!$item->disponibilidade ==  0) {
-        //     foreach ($this->itens as $key => $value) {
-        //         if ($item->id == $value->id) {
-        //             //      Item encontrado, remova-o do array
-        //             unset($this->itens[$key]);
-        //             break; // Pode parar a iteração após encontrar e remover o item
-        //         }
-        //     }
-        //     $this->carrinho[] = $item;
-        // }
-
-        if (!$item->disponibilidade == 0) {
-            // Verifica se o item já está presente no carrinho
-            $indiceExistente = array_search($item->id, array_column($this->carrinho, 'id'));
-
-            if ($indiceExistente === false) {
-                // Item não está no carrinho, adiciona-o
-                $this->carrinho[] = $item;
-            }
-        }
-    }
-
-    public function remover(Item $item)
-    {
-        //buscando o índice do item
-        $num = array_search($item, $this->carrinho);
+        //buscando o índice do material
+        $num = array_search($material, $this->selecionados);
         //retirando da array
-        unset($this->carrinho[$num]);
+        unset($this->selecionados[$num]);
         //reorganizando a arraylist
-        $this->carrinho = array_values($this->carrinho);
+        $this->selecionados = array_values($this->selecionados);
     }
 
     public function render()
     {
-        $this->materiais = Material::orderBy('nome', 'asc')->get();
-        if (!$this->filtro_material == 0) {
-            $this->itens = Item::where('material_id', $this->filtro_material)->get();
-        } else {
-            $this->mount();
+        $materiais = Material::with('local')->orderBy('nome', 'asc')->get();
+        if ($this->filtro_material) {
+            $materiais = self::filtrar_materiais($this->filtro_material, $materiais);
         }
-        return view('livewire.tela-emprestimos', ['carrinho_itens' => $this->carrinho]);
+        $this->materiais = $materiais;
+        return view('livewire.tela-emprestimos');
+    }
+
+    public static function contem(
+        string $texto,
+        string $filtro,
+        bool $ignorar_case = true,
+        // TODO: Ignorar diacríticos
+    ) {
+        if ($ignorar_case) {
+            $texto = strtolower($texto);
+            $filtro = strtolower($filtro);
+        }
+        return str_contains($texto, $filtro);
+    }
+
+    public static function filtrar_materiais(
+        string $filtro,
+        Collection $materiais,
+        bool $ignorar_case = true
+    ): array {
+        $filtrados = [];
+        foreach ($materiais as $mat) {
+            $campos = [$mat->nome, $mat->estado_conservacao->value, $mat->local->nome];
+            foreach ($campos as $campo) {
+                if (self::contem($campo, $filtro)) {
+                    $filtrados[] = $mat;
+                    break;
+                }
+            }
+        }
+        return $filtrados;
     }
 }
