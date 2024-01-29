@@ -48,7 +48,7 @@ class Material extends Model
      * 
      * @return array Um booleano e uma string, onde:
      *   o booleano indica se o Material está disponível e
-     *   a string indica o motivo. Se o Material estiver disponível, a string é vazia.
+     *   a string indica o motivo.
      */
     public function disponivel(): array
     {
@@ -65,7 +65,7 @@ class Material extends Model
             return [false, "Emprestado a {$atual->usuario_que_recebeu}"];
         }
         // Está em bom estado e não está emprestado, então está disponível
-        return [true, ''];
+        return [true, 'Disponível'];
     }
 
     /**

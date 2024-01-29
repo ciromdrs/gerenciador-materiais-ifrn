@@ -142,7 +142,7 @@ class MaterialTest extends TestCase
         [$disponivel, $motivo] = $mat->disponivel();
 
         $this->assertTrue($disponivel);
-        $this->assertEmpty($motivo);
+        $this->assertStringContainsStringIgnoringCase('dispon', $motivo);
     }
 
     /**
@@ -214,6 +214,6 @@ class MaterialTest extends TestCase
         [$disponivel, $motivo] = $mat2->disponivel();
 
         $this->assertTrue($disponivel);
-        $this->assertEmpty($motivo);
+        $this->assertStringContainsStringIgnoringCase('dispon', $motivo);
     }
 }
